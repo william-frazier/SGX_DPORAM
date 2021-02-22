@@ -1,0 +1,26 @@
+GetEnclavePublishedKey : Verification Successful! 
+Done with initializeZeroTrace
+LOG_FILE = /home/wfrazier/databases/ZeroTrace/Sample_App/DET_MB_RESULTS//CO_16384_1024_8_3_100PARAMS in run_experiment: max_blocks =16384, data_size =1024
+Before ZT_New call
+APP.cpp : ComputedRecursionLevels = 1App.cpp: Parmas for LS : 
+ (16384, 13, 3, 8, 1048, 1, 88, 1)
+DET_MB_PARAMS.recursion_levels = 1
+INSTANCE_ID returned = 0
+Inserted instance_id = 0 into ls_CORAM
+IN ORAMTree::SetParams!!
+RECURSION_LEVELS = 1
+Correct recursive stash setup call was invoked, gn = 3077416 
+, gnIn ORAMTree::Initialize(), Before BuildTreeRecursive, gN = 16384
+In ORAMTree:BuildTreeLevel N_level[0]=8192
+In ORAMTree::Initialize(), After BuildTreeRecursive
+Done with ZT_New call, zt_id = 0
+
+
+Request_size = 1040
+Log_file = /home/wfrazier/databases/ZeroTrace/Sample_App/DET_MB_RESULTS//CO_16384_1024_8_3_100
+Before logfile loop
+Done with logfile loop
+Requests Fin
+149217
+Per query time = 1.492170 ms
+EXP SUCCESS! 
