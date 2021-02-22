@@ -223,6 +223,7 @@ void accessInterface(uint32_t instance_id, uint8_t oram_type, unsigned char *enc
   memcpy(&id, request_ptr, ID_SIZE_IN_BYTES); 
   data_in = request_ptr+ID_SIZE_IN_BYTES;
 
+  printf("Attempting...\n opType = %s\n and request = %s\n", request[0], request_ptr);
   if(oram_type==0){
     poram_current_instance = poram_instances[instance_id];
     poram_current_instance->Access(id, opType, data_in, data_out);
