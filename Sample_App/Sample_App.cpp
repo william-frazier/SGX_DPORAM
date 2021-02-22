@@ -16,7 +16,7 @@
 */
 
 #include "Sample_App.hpp"
-
+#define PRINT_REQ_DETAILS 1 
  
 void getParams(int argc, char* argv[])
 {
