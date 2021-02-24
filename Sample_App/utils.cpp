@@ -93,7 +93,7 @@ int AES_GCM_128_encrypt (unsigned char *plaintext, int plaintext_len, unsigned c
   unsigned char *ciphertext, unsigned char *tag)
 {
   EVP_CIPHER_CTX *ctx;
-
+  printf("Encrypting %s\n", plaintext);
   int len;
   int ciphertext_len;
 
@@ -202,6 +202,7 @@ int AES_GCM_128_decrypt(unsigned char *ciphertext, int ciphertext_len, unsigned 
   if(ret > 0)
   {
     /* Success */
+    printf("utils.cpp, decrypted to %s\n", plaintext);
     plaintext_len += len;
     return plaintext_len;
   }
@@ -259,8 +260,9 @@ int encryptRequest(int request_id, char op_type, unsigned char *data, uint32_t d
   //1 from op_type
   unsigned char *serialized_request = (unsigned char*) malloc (1+ID_SIZE_IN_BYTES+data_size);
   serializeRequest(request_id, op_type, data, data_size, serialized_request);
-
+  // This call causes serialized_request to point to op_type||request_id||data
   encrypted_request_size = AES_GCM_128_encrypt(serialized_request, request_size, NULL, 0, (unsigned char*) SHARED_AES_KEY, (unsigned char*) HARDCODED_IV, IV_LENGTH, encrypted_request, tag);
+
   //printf("encrypted_request_size returned for AES_GCM_128_encrypt = %d\n", encrypted_request_size);
 
   free(serialized_request);

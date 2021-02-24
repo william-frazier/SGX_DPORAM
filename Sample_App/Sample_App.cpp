@@ -16,8 +16,9 @@
 */
 
 #include "Sample_App.hpp"
-#define PRINT_REQ_DETAILS 1 
- 
+#define PRINT_REQ_DETAILS 1
+
+
 void getParams(int argc, char* argv[])
 {
   printf("Started getParams\n");
@@ -170,14 +171,17 @@ int main(int argc, char *argv[]) {
       #endif
 
       //TODO: Patch this along with instances patch		
-      uint32_t instance_id = 0;	
-      
+      uint32_t instance_id = 0;
+
       //Prepare Request:
-      //request = rs[i]
+      uint32_t request = rs[i];
       generate_request_start = clock();
-      encryptRequest(0, 'r', data_in, DATA_SIZE, encrypted_request, tag_in, encrypted_request_size);
+
+      // first param is ID to check
+      encryptRequest(request, 'r', data_in, DATA_SIZE, encrypted_request, tag_in, encrypted_request_size);
       generate_request_stop = clock();		
 
+      //printf("encrypted request = %s\n", encrypted_request);
       //Process Request:
       process_request_start = clock();		
       ZT_Access(instance_id, ORAM_TYPE, encrypted_request, encrypted_response, tag_in, tag_out, encrypted_request_size, response_size, TAG_SIZE);

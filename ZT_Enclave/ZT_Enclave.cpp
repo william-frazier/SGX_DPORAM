@@ -207,6 +207,7 @@ void accessInterface(uint32_t instance_id, uint8_t oram_type, unsigned char *enc
   status = sgx_rijndael128GCM_decrypt((const sgx_aes_gcm_128bit_key_t *) SHARED_AES_KEY, (const uint8_t *) encrypted_request,
 			      encrypted_request_size, (uint8_t *) request, (const uint8_t *) HARDCODED_IV, IV_LENGTH,
 			      NULL, 0, (const sgx_aes_gcm_128bit_tag_t*) tag_in);
+  //printf("Request decrypted to %u\n", request);
   /*	
   if(status == SGX_SUCCESS)
 	  printf("Decrypt returned Success flag\n");
