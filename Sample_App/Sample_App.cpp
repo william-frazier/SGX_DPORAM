@@ -147,7 +147,8 @@ int main(int argc, char *argv[]) {
   tag_in = (unsigned char*) malloc (TAG_SIZE);
   tag_out = (unsigned char*) malloc (TAG_SIZE);
   data_in = (unsigned char*) malloc (DATA_SIZE);
-
+  //data_in_test = (unsigned char*) malloc (DATA_SIZE);
+  unsigned char* data_in_test = (unsigned char*)"testEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVW";
   start = clock();
 
   #ifdef PRINT_REQ_DETAILS	
@@ -163,6 +164,39 @@ int main(int argc, char *argv[]) {
     encrypted_request_size = computeCiphertextSize(DATA_SIZE);
     encrypted_request = (unsigned char *) malloc (encrypted_request_size);				
     encrypted_response = (unsigned char *) malloc (response_size);		
+
+    printf("Ok I'm gonna try to read 10...\n");
+    encryptRequest(10, 'r', data_in, DATA_SIZE, encrypted_request, tag_in, encrypted_request_size);
+    printf("Read request is encrypted.\n");
+    ZT_Access((uint32_t)0, ORAM_TYPE, encrypted_request, encrypted_response, tag_in, tag_out, encrypted_request_size, response_size, TAG_SIZE);
+    printf("Access made\n");
+    extractResponse(encrypted_response, tag_out, response_size, data_out);
+    printf("Here's what we got:\n");
+    for(uint32_t j=0; j < DATA_SIZE; j++)
+        printf("%c", data_out[j]);
+    printf("\n");
+    printf("Writing to record 10\n");
+    encryptRequest(10, 'w', data_in_test, DATA_SIZE, encrypted_request, tag_in, encrypted_request_size);
+    printf("Write request is encrypted.\n");
+    ZT_Access((uint32_t)0, ORAM_TYPE, encrypted_request, encrypted_response, tag_in, tag_out, encrypted_request_size, response_size, TAG_SIZE);
+    printf("Access made\n");
+    extractResponse(encrypted_response, tag_out, response_size, data_out);
+    printf("Here's what we got after writing:\n");
+    for(uint32_t j=0; j < DATA_SIZE; j++)
+        printf("%c", data_out[j]);
+    printf("\n");
+    printf("Ok I'm gonna try to read 10...\n");
+    encryptRequest(10, 'r', data_in, DATA_SIZE, encrypted_request, tag_in, encrypted_request_size);
+    printf("Request is encrypted.\n");
+    ZT_Access((uint32_t)0, ORAM_TYPE, encrypted_request, encrypted_response, tag_in, tag_out, encrypted_request_size, response_size, TAG_SIZE);
+    printf("Access made\n");
+    extractResponse(encrypted_response, tag_out, response_size, data_out);
+    printf("Here's what we got:\n");
+    for(uint32_t j=0; j < DATA_SIZE; j++)
+        printf("%c", data_out[j]);
+    printf("\n");
+
+
 
     for(i=0;i<REQUEST_LENGTH;i++) {
       #ifdef PRINT_REQ_DETAILS		
@@ -193,7 +227,7 @@ int main(int argc, char *argv[]) {
       extract_response_stop = clock();
 
       data_out[DATA_SIZE]='\0';
-      //printf("Obtained data : %s\n", data_out);
+      printf("Obtained data : %s\n", data_out);
 
       #ifdef RESULTS_DEBUG
           printf("datasize = %d, Fetched Data :", DATA_SIZE);
