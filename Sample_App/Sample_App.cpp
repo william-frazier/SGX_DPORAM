@@ -19,12 +19,16 @@
 #define PRINT_REQ_DETAILS 1
 
 
-void get(uint32_t blockID, unsigned char* data_in, unsigned char* data_out, int block_size, unsigned char* encrypted_request, unsigned char* tag_in, unsigned char* encrypted_response, unsigned char* tag_out, uint32_t tag_size) 
+void get(uint32_t blockID, unsigned char* data_in, unsigned char* data_out, int block_size, unsigned char* encrypted_request, unsigned char* encrypted_response, uint32_t oramID) 
 {
-	uint32_t response_size = block_size * bulk_batch_size;
+	unsigned char* tag_in = (unsigned char*) malloc(TAG_SIZE);
+	unsigned char* tag_out = (unsigned char*)malloc(TAG_SIZE);
+	uint32_t response_size = block_size;
 	uint32_t encrypted_request_size = computeCiphertextSize(block_size);
 	encryptRequest(blockID, 'r', data_in, block_size, encrypted_request, tag_in, encrypted_request_size);
-	ZT_Access(instance_id, ORAM_TYPE, encrypted_request, encrypted_response, tag_in, tag_out, encrypted_request_size, response_size, tag_size);
+	printf("Successful encryption.\n");
+	ZT_Access(oramID, ORAM_TYPE, encrypted_request, encrypted_response, tag_in, tag_out, encrypted_request_size, response_size, TAG_SIZE);
+	printf("Successful access.\n");
 	extractResponse(encrypted_response, tag_out, response_size, data_out);
 	data_out[response_size] = '\0';
 	printf("Fetched data\n");
@@ -201,7 +205,7 @@ int main(int argc, char *argv[]) {
         printf("%c", data_out[j]);
     printf("\n");
     printf("Ok I'm gonna try to read 10...\n");
-    encryptRequest(10, 'r', data_in, DATA_SIZE, encrypted_request, tag_in, encrypted_request_size);
+/*    encryptRequest(10, 'r', data_in, DATA_SIZE, encrypted_request, tag_in, encrypted_request_size);
     printf("Request is encrypted.\n");
     ZT_Access((uint32_t)0, ORAM_TYPE, encrypted_request, encrypted_response, tag_in, tag_out, encrypted_request_size, response_size, TAG_SIZE);
     printf("Access made\n");
@@ -209,9 +213,9 @@ int main(int argc, char *argv[]) {
     printf("Here's what we got:\n");
     for(uint32_t j=0; j < DATA_SIZE; j++)
         printf("%c", data_out[j]);
-    printf("\n");
+    printf("\n");*/
     printf("TESTING!!!!\n");
-    get(0, data_in, data_out, DATA_SIZE, encrypted_request, tag_in, encrypted_response, tag_out, TAG_SIZE);
+    get(10, data_in, data_out, DATA_SIZE, encrypted_request, encrypted_response, 0);
     printf("It must not have crashed!\n");
 
     for(i=0;i<REQUEST_LENGTH;i++) {
