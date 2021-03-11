@@ -19,6 +19,21 @@
 #define PRINT_REQ_DETAILS 1
 
 
+void get(uint32_t blockID, unsigned char* data_in, unsigned char* data_out, int block_size, unsigned char* encrypted_request, unsigned char* tag_in, unsigned char* encrypted_response, unsigned char* tag_out, uint32_t tag_size) 
+{
+	uint32_t response_size = block_size * bulk_batch_size;
+	uint32_t encrypted_request_size = computeCiphertextSize(block_size);
+	encryptRequest(blockID, 'r', data_in, block_size, encrypted_request, tag_in, encrypted_request_size);
+	ZT_Access(instance_id, ORAM_TYPE, encrypted_request, encrypted_response, tag_in, tag_out, encrypted_request_size, response_size, tag_size);
+	extractResponse(encrypted_response, tag_out, response_size, data_out);
+	data_out[response_size] = '\0';
+	printf("Fetched data\n");
+	for (int i = 0; i < response_size; i++)
+		printf("%c",data_out[i]);
+	printf("\n");
+}
+
+
 void getParams(int argc, char* argv[])
 {
   printf("Started getParams\n");
@@ -195,8 +210,9 @@ int main(int argc, char *argv[]) {
     for(uint32_t j=0; j < DATA_SIZE; j++)
         printf("%c", data_out[j]);
     printf("\n");
-
-
+    printf("TESTING!!!!\n");
+    get(0, data_in, data_out, DATA_SIZE, encrypted_request, tag_in, encrypted_response, tag_out, TAG_SIZE);
+    printf("It must not have crashed!\n");
 
     for(i=0;i<REQUEST_LENGTH;i++) {
       #ifdef PRINT_REQ_DETAILS		
