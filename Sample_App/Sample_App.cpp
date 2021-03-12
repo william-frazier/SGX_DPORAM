@@ -16,6 +16,7 @@
 */
 
 #include "Sample_App.hpp"
+#include <iostream>
 #define PRINT_REQ_DETAILS 1
 
 
@@ -161,7 +162,7 @@ int main(int argc, char *argv[]) {
 
   //Store returned zt_id, to make use of different ORAM instances!
   printf("Obtained zt_id = %d\n", zt_id);    
-
+  
   //Variable declarations
   RandomRequestSource reqsource;
   clock_t start,end,tclock;  
@@ -222,7 +223,11 @@ int main(int argc, char *argv[]) {
         printf("%c", data_out[j]);
     printf("\n");*/
     printf("TESTING!!!!\n");
+<<<<<<< HEAD
     get(10, data_in, data_out, DATA_SIZE, 'r', 0);
+=======
+    get(10, data_in, data_out, DATA_SIZE, encrypted_request, encrypted_response, 0);
+>>>>>>> 1d6716d6846b0eccfd1489e50f4ac78e059d1c6f
     printf("It must not have crashed!\n");
 
     for(i=0;i<REQUEST_LENGTH;i++) {

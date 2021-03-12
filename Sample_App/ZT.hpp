@@ -65,7 +65,11 @@ int8_t ZT_HSORAM_fetch(uint32_t lsoram_iid, uint32_t oram_iid, uint8_t oram_type
 int8_t ZT_LSORAM_evict(uint32_t id, unsigned char *key, uint32_t key_size);
 void ZT_LSORAM_delete(uint32_t id);
 
+<<<<<<< HEAD
 void get(uint32_t blockID, unsigned char* data_in, int block_size, char op,  uint32_t oramID);
+=======
+void get(uint32_t blockID, unsigned char* data_in, int block_size, unsigned char* encrypted_request, unsigned char* encrypted_response, uint32_t oramID);
+>>>>>>> 1d6716d6846b0eccfd1489e50f4ac78e059d1c6f
 //LSORAM Full-olivious API
 //void ZT_LSORAM_Access();
 
