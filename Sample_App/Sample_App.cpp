@@ -226,7 +226,7 @@ int main(int argc, char *argv[]) {
     char token;
     do
     {
-    char* new_data = new char[128];
+    char* new_data = new char[DATA_SIZE];
     std::cout << "Enter an operation: ";
     std::cin >> token;
     if (token == 'w')
