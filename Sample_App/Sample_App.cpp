@@ -19,6 +19,7 @@
 #define PRINT_REQ_DETAILS 1
 
 
+
 void get(uint32_t blockID, unsigned char* data_in, unsigned char* data_out, int block_size, unsigned char* encrypted_request, unsigned char* encrypted_response, uint32_t oramID) 
 {
 	unsigned char* tag_in = (unsigned char*) malloc(TAG_SIZE);
