@@ -20,13 +20,15 @@
 
 
 
-void get(uint32_t blockID, unsigned char* data_in, unsigned char* data_out, int block_size, unsigned char* encrypted_request, unsigned char* encrypted_response, uint32_t oramID) 
+void get(uint32_t blockID, unsigned char* data_in, unsigned char* data_out, int block_size,char op, uint32_t oramID) 
 {
-	unsigned char* tag_in = (unsigned char*) malloc(TAG_SIZE);
-	unsigned char* tag_out = (unsigned char*)malloc(TAG_SIZE);
 	uint32_t response_size = block_size;
 	uint32_t encrypted_request_size = computeCiphertextSize(block_size);
-	encryptRequest(blockID, 'r', data_in, block_size, encrypted_request, tag_in, encrypted_request_size);
+	unsigned char* encrypted_request = (unsigned char*) malloc(encrypted_request_size);
+	unsigned char* encrypted_response = (unsigned char*) malloc(response_size);
+	unsigned char* tag_in = (unsigned char*) malloc(TAG_SIZE);
+	unsigned char* tag_out = (unsigned char*)malloc(TAG_SIZE);
+	encryptRequest(blockID, op, data_in, block_size, encrypted_request, tag_in, encrypted_request_size);
 	printf("Successful encryption.\n");
 	ZT_Access(oramID, ORAM_TYPE, encrypted_request, encrypted_response, tag_in, tag_out, encrypted_request_size, response_size, TAG_SIZE);
 	printf("Successful access.\n");
@@ -36,6 +38,10 @@ void get(uint32_t blockID, unsigned char* data_in, unsigned char* data_out, int 
 	for (int i = 0; i < response_size; i++)
 		printf("%c",data_out[i]);
 	printf("\n");
+	free(encrypted_request);
+	free(encrypted_response);
+	free(tag_in);
+	free(tag_out);
 }
 
 
@@ -216,7 +222,7 @@ int main(int argc, char *argv[]) {
         printf("%c", data_out[j]);
     printf("\n");*/
     printf("TESTING!!!!\n");
-    get(10, data_in, data_out, DATA_SIZE, encrypted_request, encrypted_response, 0);
+    get(10, data_in, data_out, DATA_SIZE, 'r', 0);
     printf("It must not have crashed!\n");
 
     for(i=0;i<REQUEST_LENGTH;i++) {
