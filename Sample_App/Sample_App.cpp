@@ -160,9 +160,9 @@ int main(int argc, char *argv[]) {
  
   printf("Before ZT_New call\n"); 
   uint32_t zt_id = ZT_New(MAX_BLOCKS, DATA_SIZE, STASH_SIZE, OBLIVIOUS_FLAG, RECURSION_DATA_SIZE, ORAM_TYPE, Z);
-
+  uint32_t zt_id_other = ZT_New(MAX_BLOCKS,DATA_SIZE,STASH_SIZE,OBLIVIOUS_FLAG, RECURSION_DATA_SIZE,ORAM_TYPE,Z);
   //Store returned zt_id, to make use of different ORAM instances!
-  printf("Obtained zt_id = %d\n", zt_id);    
+  printf("Obtained zt_id = %d\n and zt_other= %d\n", zt_id, zt_id_other);    
   
   //Variable declarations
   RandomRequestSource reqsource;
@@ -176,7 +176,7 @@ int main(int argc, char *argv[]) {
   tag_out = (unsigned char*) malloc (TAG_SIZE);
   data_in = (unsigned char*) malloc (DATA_SIZE);
   //data_in_test = (unsigned char*) malloc (DATA_SIZE);
-  unsigned char* data_in_test = (unsigned char*)"Read block 10ABCDEF";
+  unsigned char* data_in_test = (unsigned char*)"Read block ";
   start = clock();
 
   #ifdef PRINT_REQ_DETAILS	
@@ -234,7 +234,10 @@ int main(int argc, char *argv[]) {
     	std::cout << "Set data_in: ";
     	std::cin.read(new_data, sizeof (new_data));
     }
-    get(10, (unsigned char*)new_data, data_out, DATA_SIZE, token, 0);
+    std::cout << "Enter ORAM ID: ";
+    uint32_t id;
+    std::cin >> id;
+    get(10, (unsigned char*)new_data, data_out, DATA_SIZE, token, id);
     } while(token!='x');
 
     for(i=0;i<REQUEST_LENGTH;i++) {

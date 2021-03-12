@@ -25,7 +25,7 @@ no_of_req=5
 #It is typically sufficient to use 150 for PathORAM and 10 for CircuitORAM
 stash_size=150
 #block_size
-block_size=128
+block_size=10
 #new/resume
 #New/Resume flag, Previously ZT had a State Store/Resume mechanism which is currently broken. So hence always use new till this is fixed
 new="new"
