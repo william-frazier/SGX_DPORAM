@@ -23,6 +23,7 @@
 
 void get(uint32_t blockID, unsigned char* data_in, unsigned char* data_out, int block_size,char op, uint32_t oramID) 
 {
+//	std::cout<< DATA_SIZE << std::endl;
 	uint32_t response_size = block_size;
 	uint32_t encrypted_request_size = computeCiphertextSize(block_size);
 	unsigned char* encrypted_request = (unsigned char*) malloc(encrypted_request_size);
@@ -175,7 +176,7 @@ int main(int argc, char *argv[]) {
   tag_out = (unsigned char*) malloc (TAG_SIZE);
   data_in = (unsigned char*) malloc (DATA_SIZE);
   //data_in_test = (unsigned char*) malloc (DATA_SIZE);
-  unsigned char* data_in_test = (unsigned char*)"testEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVW";
+  unsigned char* data_in_test = (unsigned char*)"Read block 10ABCDEF";
   start = clock();
 
   #ifdef PRINT_REQ_DETAILS	
@@ -222,11 +223,19 @@ int main(int argc, char *argv[]) {
     for(uint32_t j=0; j < DATA_SIZE; j++)
         printf("%c", data_out[j]);
     printf("\n");*/
-    printf("TESTING!!!!\n");
-
-    get(10, data_in, data_out, DATA_SIZE, 'r', 0);
-
-    printf("It must not have crashed!\n");
+    char token;
+    do
+    {
+    char* new_data = new char[128];
+    std::cout << "Enter an operation: ";
+    std::cin >> token;
+    if (token == 'w')
+    {
+    	std::cout << "Set data_in: ";
+    	std::cin.read(new_data, sizeof (new_data));
+    }
+    get(10, (unsigned char*)new_data, data_out, DATA_SIZE, token, 0);
+    } while(token!='x');
 
     for(i=0;i<REQUEST_LENGTH;i++) {
       #ifdef PRINT_REQ_DETAILS		
