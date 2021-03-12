@@ -16,6 +16,7 @@
 */
 
 #include "Sample_App.hpp"
+#include <iostream>
 #define PRINT_REQ_DETAILS 1
 
 
@@ -154,7 +155,7 @@ int main(int argc, char *argv[]) {
 
   //Store returned zt_id, to make use of different ORAM instances!
   printf("Obtained zt_id = %d\n", zt_id);    
-
+  
   //Variable declarations
   RandomRequestSource reqsource;
   clock_t start,end,tclock;  
