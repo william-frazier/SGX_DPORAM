@@ -17,6 +17,7 @@
 
 #include "Sample_App.hpp"
 #include <iostream>
+#include <thread>
 #define PRINT_REQ_DETAILS 1
 
 
@@ -31,9 +32,9 @@ void get(uint32_t blockID, unsigned char* data_in, unsigned char* data_out, int 
 	unsigned char* tag_in = (unsigned char*) malloc(TAG_SIZE);
 	unsigned char* tag_out = (unsigned char*)malloc(TAG_SIZE);
 	encryptRequest(blockID, op, data_in, block_size, encrypted_request, tag_in, encrypted_request_size);
-	printf("Successful encryption.\n");
+	printf("Successful encryption in ZT %d.\n", oramID);
 	ZT_Access(oramID, ORAM_TYPE, encrypted_request, encrypted_response, tag_in, tag_out, encrypted_request_size, response_size, TAG_SIZE);
-	printf("Successful access.\n");
+	printf("Successful access in ZT %d.\n", oramID);
 	extractResponse(encrypted_response, tag_out, response_size, data_out);
 	data_out[response_size] = '\0';
 	printf("Fetched data\n");
@@ -157,13 +158,15 @@ int main(int argc, char *argv[]) {
   getParams(argc, argv);
 
   initializeZeroTrace();
- 
+
+
+
   printf("Before ZT_New call\n"); 
   uint32_t zt_id = ZT_New(MAX_BLOCKS, DATA_SIZE, STASH_SIZE, OBLIVIOUS_FLAG, RECURSION_DATA_SIZE, ORAM_TYPE, Z);
   uint32_t zt_id_other = ZT_New(MAX_BLOCKS,DATA_SIZE,STASH_SIZE,OBLIVIOUS_FLAG, RECURSION_DATA_SIZE,ORAM_TYPE,Z);
   //Store returned zt_id, to make use of different ORAM instances!
   printf("Obtained zt_id = %d\n and zt_other= %d\n", zt_id, zt_id_other);    
-  
+
   //Variable declarations
   RandomRequestSource reqsource;
   clock_t start,end,tclock;  
@@ -177,7 +180,13 @@ int main(int argc, char *argv[]) {
   data_in = (unsigned char*) malloc (DATA_SIZE);
   //data_in_test = (unsigned char*) malloc (DATA_SIZE);
   unsigned char* data_in_test = (unsigned char*)"Read block ";
+
+
+
   start = clock();
+
+
+
 
   #ifdef PRINT_REQ_DETAILS	
     printf("Starting Actual Access requests\n");
@@ -188,6 +197,12 @@ int main(int argc, char *argv[]) {
     response_size = DATA_SIZE;
     //+1 for simplicity printing a null-terminated string
     data_out = (unsigned char*) malloc (DATA_SIZE + 1);
+
+    std::thread t1(get, (uint32_t)10, (unsigned char*)data_in, (unsigned char*)data_out, (uint32_t)DATA_SIZE, 'r', (uint32_t)zt_id);
+    std::thread t2(get, (uint32_t)10, data_in, data_out, DATA_SIZE, 'r', zt_id_other);
+
+    t1.join();
+    t2.join();
 
     encrypted_request_size = computeCiphertextSize(DATA_SIZE);
     encrypted_request = (unsigned char *) malloc (encrypted_request_size);				
