@@ -14,3 +14,5 @@ HSORAM_Client : HSORAM_Client.cpp utils.cpp
 
 Test_Correctness : Test_Correctness.cpp utils.cpp
 	g++ -std=c++11 Test_Correctness.cpp utils.cpp -L=$(CURDIR) -lZT -lcrypto -Wl,--rpath=$(CURDIR) -o testcorrectness
+
+# test
