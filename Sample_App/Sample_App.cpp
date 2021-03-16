@@ -324,6 +324,7 @@ int main(int argc, char *argv[]) {
       ZT_Bulk_Read(instance_id, ORAM_TYPE, bulk_batch_size, encrypted_request, encrypted_response, tag_in, tag_out, encrypted_request_size, response_size, TAG_SIZE);
       process_request_stop = clock();				
 
+
       //Extract Response:
       extract_response_start = clock();
       //extractResponse(encrypted_response, tag_out, response_size, data_out);
@@ -334,13 +335,60 @@ int main(int argc, char *argv[]) {
 
       #ifdef RESULTS_DEBUG
           printf("datasize = %d, Fetched Data :", DATA_SIZE);
-          for(uint32_t j=0; j < DATA_SIZE;j++){
+          for(uint32_t j=0; j < response_size;j++){
         printf("%c", data_out[j]);
           }
           printf("\n");
       #endif
 
-      #ifdef ANALYSIS
+    encryptRequest(10, 'w', data_in_test, DATA_SIZE, encrypted_request, tag_in, encrypted_request_size);
+    printf("Write request is encrypted.\n");
+    ZT_Access((uint32_t)0, ORAM_TYPE, encrypted_request, encrypted_response, tag_in, tag_out, encrypted_request_size, response_size, TAG_SIZE);
+    encryptRequest(9, 'w', data_in_test, DATA_SIZE, encrypted_request, tag_in, encrypted_request_size);
+    printf("Write request is encrypted.\n");
+    ZT_Access((uint32_t)0, ORAM_TYPE, encrypted_request, encrypted_response, tag_in, tag_out, encrypted_request_size, response_size, TAG_SIZE);
+    encryptRequest(2, 'w', data_in_test, DATA_SIZE, encrypted_request, tag_in, encrypted_request_size);
+    printf("Write request is encrypted.\n");
+    ZT_Access((uint32_t)1, ORAM_TYPE, encrypted_request, encrypted_response, tag_in, tag_out, encrypted_request_size, response_size, TAG_SIZE);
+
+    uint32_t test_bulk_read[] = {1,2,3,4,5,6,7,8,9,10,11,12};
+    encryptBulkReadRequest(test_bulk_read, 0, bulk_batch_size, encrypted_request, tag_in, encrypted_request_size);
+    ZT_Bulk_Read(0, ORAM_TYPE, bulk_batch_size, encrypted_request, encrypted_response, tag_in, tag_out, encrypted_request_size, response_size, TAG_SIZE);
+    extractBulkResponse(encrypted_response, tag_out, response_size, data_out);
+    printf("datasize bulk = %d, Fetched Data :", DATA_SIZE);
+    for(uint32_t j=0; j < response_size;j++){
+        printf("%c", data_out[j]);
+    }
+        printf("\n");
+
+    encryptBulkReadRequest(test_bulk_read, 0+bulk_batch_size, bulk_batch_size, encrypted_request, tag_in, encrypted_request_size);
+    ZT_Bulk_Read(0, ORAM_TYPE, bulk_batch_size, encrypted_request, encrypted_response, tag_in, tag_out, encrypted_request_size, response_size, TAG_SIZE);
+    extractBulkResponse(encrypted_response, tag_out, response_size, data_out);
+    printf("datasize bulk = %d, Fetched Data :", DATA_SIZE);
+    for(uint32_t j=0; j < response_size;j++){
+        printf("%c", data_out[j]);
+    }
+        printf("\n");
+    encryptBulkReadRequest(test_bulk_read, 2*bulk_batch_size, bulk_batch_size, encrypted_request, tag_in, encrypted_request_size);
+    ZT_Bulk_Read(0, ORAM_TYPE, bulk_batch_size, encrypted_request, encrypted_response, tag_in, tag_out, encrypted_request_size, response_size, TAG_SIZE);
+    extractBulkResponse(encrypted_response, tag_out, response_size, data_out);
+    printf("datasize bulk = %d, Fetched Data :", DATA_SIZE);
+    for(uint32_t j=0; j < response_size;j++){
+        printf("%c", data_out[j]);
+    }
+        printf("\n");
+    encryptBulkReadRequest(test_bulk_read, 0, bulk_batch_size, encrypted_request, tag_in, encrypted_request_size);
+    ZT_Bulk_Read(1, ORAM_TYPE, bulk_batch_size, encrypted_request, encrypted_response, tag_in, tag_out, encrypted_request_size, response_size, TAG_SIZE);
+    extractBulkResponse(encrypted_response, tag_out, response_size, data_out);
+    printf("datasize bulk = %d, Fetched Data :", DATA_SIZE);
+    for(uint32_t j=0; j < response_size;j++){
+        printf("%c", data_out[j]);
+    }
+        printf("\n");
+
+
+
+	#ifdef ANALYSIS
 
         //TIME in CLOCKS
         generate_request_time = generate_request_stop - generate_request_start;
