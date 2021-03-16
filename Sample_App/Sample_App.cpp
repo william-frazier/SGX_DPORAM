@@ -198,8 +198,13 @@ int main(int argc, char *argv[]) {
     //+1 for simplicity printing a null-terminated string
     data_out = (unsigned char*) malloc (DATA_SIZE + 1);
 
-    std::thread t1(get, (uint32_t)10, (unsigned char*)data_in, (unsigned char*)data_out, (uint32_t)DATA_SIZE, 'r', (uint32_t)zt_id);
-    std::thread t2(get, (uint32_t)10, data_in, data_out, DATA_SIZE, 'r', zt_id_other);
+    auto getRoutine = [](uint32_t blockID, unsigned char* data_in, unsigned char* data_out, int block_size,char op, uint32_t oramID) -> void {
+      get(blockID, data_in, data_out, block_size, op, oramID);
+      std::cout << "In getRoutine" << std::endl;
+    };
+
+    std::thread t1(getRoutine, (uint32_t)10, (unsigned char*)data_in, (unsigned char*)data_out, (int)DATA_SIZE, 'r', (uint32_t)zt_id);
+    std::thread t2(getRoutine, (uint32_t)10, data_in, data_out, DATA_SIZE, 'r', zt_id_other);
 
     t1.join();
     t2.join();
