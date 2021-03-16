@@ -18,11 +18,14 @@
 #include "Sample_App.hpp"
 #include <iostream>
 #include <thread>
+#include <chrono>
 #define PRINT_REQ_DETAILS 1
 
 
 
 void get(uint32_t blockID, unsigned char* data_in, unsigned char* data_out, int block_size,char op, uint32_t oramID) 
+{
+for (int j = 0; j < 25; j++)
 {
 //	std::cout<< DATA_SIZE << std::endl;
 	uint32_t response_size = block_size;
@@ -31,13 +34,13 @@ void get(uint32_t blockID, unsigned char* data_in, unsigned char* data_out, int 
 	unsigned char* encrypted_response = (unsigned char*) malloc(response_size);
 	unsigned char* tag_in = (unsigned char*) malloc(TAG_SIZE);
 	unsigned char* tag_out = (unsigned char*)malloc(TAG_SIZE);
-	encryptRequest(blockID, op, data_in, block_size, encrypted_request, tag_in, encrypted_request_size);
+	encryptRequest(blockID+j, op, data_in, block_size, encrypted_request, tag_in, encrypted_request_size);
 	printf("Successful encryption in ZT %d.\n", oramID);
 	ZT_Access(oramID, ORAM_TYPE, encrypted_request, encrypted_response, tag_in, tag_out, encrypted_request_size, response_size, TAG_SIZE);
 	printf("Successful access in ZT %d.\n", oramID);
 	extractResponse(encrypted_response, tag_out, response_size, data_out);
 	data_out[response_size] = '\0';
-	printf("Fetched data\n");
+	printf("Fetched data for %d\n", j);
 	for (int i = 0; i < response_size; i++)
 		printf("%c",data_out[i]);
 	printf("\n");
@@ -46,7 +49,7 @@ void get(uint32_t blockID, unsigned char* data_in, unsigned char* data_out, int 
 	free(tag_in);
 	free(tag_out);
 }
-
+}
 
 void getParams(int argc, char* argv[])
 {
@@ -203,11 +206,16 @@ int main(int argc, char *argv[]) {
       std::cout << "In getRoutine" << std::endl;
     };
 
+    auto start = std::chrono::high_resolution_clock::now();
+
     std::thread t1(getRoutine, (uint32_t)10, (unsigned char*)data_in, (unsigned char*)data_out, (int)DATA_SIZE, 'r', (uint32_t)zt_id);
     std::thread t2(getRoutine, (uint32_t)10, data_in, data_out, DATA_SIZE, 'r', zt_id_other);
 
     t1.join();
     t2.join();
+
+    //getRoutine(10, data_in, data_out, DATA_SIZE, 'r', zt_id);
+    //getRoutine(10, data_in, data_out, DATA_SIZE, 'r', zt_id_other);
 
     encrypted_request_size = computeCiphertextSize(DATA_SIZE);
     encrypted_request = (unsigned char *) malloc (encrypted_request_size);				
@@ -243,6 +251,11 @@ int main(int argc, char *argv[]) {
     for(uint32_t j=0; j < DATA_SIZE; j++)
         printf("%c", data_out[j]);
     printf("\n");*/
+    auto stop = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+
+    std::cout << "Thread timing!: " << duration.count() << std::endl; 
+
     char token;
     do
     {
