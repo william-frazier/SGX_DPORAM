@@ -300,7 +300,7 @@ void accessBulkReadInterface(uint32_t instance_id, uint8_t oram_type, uint32_t n
     //Extract Request Ids
     memcpy(&id, request_ptr, ID_SIZE_IN_BYTES);
     request_ptr+=ID_SIZE_IN_BYTES; 
-
+    printf("Accessing block %d\n\n", id);
     //TODO: Fix Instances issue.
     if(oram_type==0)
 	    poram_current_instance->Access(id, opType, data_in, response_ptr);
