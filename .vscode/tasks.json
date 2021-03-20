@@ -1,0 +1,21 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "build",
+			"type": "shell",
+			"command": "make",
+			"args": [
+				"SGXSSL_INCLUDE_PATH=/home/dmytro/intel-sgx-ssl/Linux/package/include",
+				"SGX_MODE=SIM"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/"
+			},
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
+		}
+	]
+}

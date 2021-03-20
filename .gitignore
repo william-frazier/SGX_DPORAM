@@ -3,9 +3,13 @@
 *.o
 *.so
 .config_*
-Enclave_t.c
 
 Sample_App/lsclient
 Sample_App/sampleapp
 Sample_App/testcorrectness
 Sample_App/hsoramclient
+
+ZT_Enclave/Enclave_t.c
+ZT_Enclave/Enclave_t.h
+ZT_Untrusted/Enclave_u.c
+ZT_Untrusted/Enclave_u.h

@@ -1,0 +1,18 @@
+{
+	// Use IntelliSense to learn about possible attributes.
+	// Hover to view descriptions of existing attributes.
+	// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "SampleApp",
+			"type": "gdb",
+			"gdbpath": "sgx-gdb",
+			"request": "launch",
+			"target": "${workspaceFolder}/Sample_App/sampleapp",
+			"arguments": "1000 5 150 10 new 1 64 path 4 4 lfile",
+			"cwd": "${workspaceFolder}/",
+			"preLaunchTask": "build"
+		}
+	]
+}
