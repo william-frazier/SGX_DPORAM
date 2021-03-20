@@ -10,9 +10,68 @@
 			"gdbpath": "sgx-gdb",
 			"request": "launch",
 			"target": "${workspaceFolder}/Sample_App/sampleapp",
-			"arguments": "1000 5 150 10 new 1 64 path 4 4 lfile",
+			"arguments": "${input:max} ${input:requests} ${input:stash} 10 new ${input:oblivious} 64 ${input:oram} 4 4 lfile",
 			"cwd": "${workspaceFolder}/",
 			"preLaunchTask": "build"
 		}
+	],
+	"inputs": [
+		{
+			"id": "max",
+			"type": "pickString",
+			"description": "Max blocks",
+			"options": [
+				"100",
+				"1000",
+				"10000"
+			],
+			"default": "100"
+		},
+		{
+			"id": "requests",
+			"type": "pickString",
+			"description": "Number of requests",
+			"options": [
+				"10",
+				"100",
+				"200",
+				"500"
+			],
+			"default": "100"
+		},
+		{
+			"id": "stash",
+			"type": "pickString",
+			"description": "Stash size",
+			"options": [
+				"10",
+				"50",
+				"100",
+				"150",
+				"200",
+				"250"
+			],
+			"default": "50"
+		},
+		{
+			"id": "oblivious",
+			"type": "pickString",
+			"description": "Olivious",
+			"options": [
+				"1",
+				"0"
+			],
+			"default": "1"
+		},
+		{
+			"id": "oram",
+			"type": "pickString",
+			"description": "ORAM type",
+			"options": [
+				"path",
+				"circuit"
+			],
+			"default": "path"
+		},
 	]
 }

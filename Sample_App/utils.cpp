@@ -93,7 +93,7 @@ int AES_GCM_128_encrypt (unsigned char *plaintext, int plaintext_len, unsigned c
   unsigned char *ciphertext, unsigned char *tag)
 {
   EVP_CIPHER_CTX *ctx;
-  printf("Encrypting %s\n", plaintext);
+  // printf("Encrypting %s\n", plaintext);
   int len;
   int ciphertext_len;
 
@@ -202,7 +202,7 @@ int AES_GCM_128_decrypt(unsigned char *ciphertext, int ciphertext_len, unsigned 
   if(ret > 0)
   {
     /* Success */
-    printf("utils.cpp, decrypted to %s\n", plaintext);
+    // printf("utils.cpp, decrypted to %s\n", plaintext);
     plaintext_len += len;
     return plaintext_len;
   }
