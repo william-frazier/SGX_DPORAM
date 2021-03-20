@@ -1,1 +1,11 @@
 *.pem
+
+*.o
+*.so
+.config_*
+Enclave_t.c
+
+Sample_App/lsclient
+Sample_App/sampleapp
+Sample_App/testcorrectness
+Sample_App/hsoramclient
