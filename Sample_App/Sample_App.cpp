@@ -17,7 +17,7 @@
 
 #include "Sample_App.hpp"
 #include <iostream>
-#define PRINT_REQ_DETAILS 1
+
 
 
 
@@ -160,9 +160,9 @@ int main(int argc, char *argv[]) {
  
   printf("Before ZT_New call\n"); 
   uint32_t zt_id = ZT_New(MAX_BLOCKS, DATA_SIZE, STASH_SIZE, OBLIVIOUS_FLAG, RECURSION_DATA_SIZE, ORAM_TYPE, Z);
-  uint32_t zt_id_other = ZT_New(MAX_BLOCKS,DATA_SIZE,STASH_SIZE,OBLIVIOUS_FLAG, RECURSION_DATA_SIZE,ORAM_TYPE,Z);
+//  uint32_t zt_id_other = ZT_New(MAX_BLOCKS,DATA_SIZE,STASH_SIZE,OBLIVIOUS_FLAG, RECURSION_DATA_SIZE,ORAM_TYPE,Z);
   //Store returned zt_id, to make use of different ORAM instances!
-  printf("Obtained zt_id = %d\n and zt_other= %d\n", zt_id, zt_id_other);    
+  //printf("Obtained zt_id = %d\n and zt_other= %d\n", zt_id, zt_id_other);    
   
   //Variable declarations
   RandomRequestSource reqsource;
@@ -192,7 +192,7 @@ int main(int argc, char *argv[]) {
     encrypted_request_size = computeCiphertextSize(DATA_SIZE);
     encrypted_request = (unsigned char *) malloc (encrypted_request_size);				
     encrypted_response = (unsigned char *) malloc (response_size);		
-
+/*
     printf("Ok I'm gonna try to read 10...\n");
     encryptRequest(10, 'r', data_in, DATA_SIZE, encrypted_request, tag_in, encrypted_request_size);
     printf("Read request is encrypted.\n");
@@ -213,7 +213,7 @@ int main(int argc, char *argv[]) {
     for(uint32_t j=0; j < DATA_SIZE; j++)
         printf("%c", data_out[j]);
     printf("\n");
-    printf("Ok I'm gonna try to read 10...\n");
+    printf("Ok I'm gonna try to read 10...\n");*/
 /*    encryptRequest(10, 'r', data_in, DATA_SIZE, encrypted_request, tag_in, encrypted_request_size);
     printf("Request is encrypted.\n");
     ZT_Access((uint32_t)0, ORAM_TYPE, encrypted_request, encrypted_response, tag_in, tag_out, encrypted_request_size, response_size, TAG_SIZE);
@@ -222,7 +222,7 @@ int main(int argc, char *argv[]) {
     printf("Here's what we got:\n");
     for(uint32_t j=0; j < DATA_SIZE; j++)
         printf("%c", data_out[j]);
-    printf("\n");*/
+    printf("\n");
     char token;
     do
     {
@@ -239,7 +239,7 @@ int main(int argc, char *argv[]) {
     std::cin >> id;
     get(10, (unsigned char*)new_data, data_out, DATA_SIZE, token, id);
     } while(token!='x');
-
+*/
     for(i=0;i<REQUEST_LENGTH;i++) {
       #ifdef PRINT_REQ_DETAILS		
         printf("---------------------------------------------------\n\nRequest no : %d\n",i);
@@ -311,8 +311,7 @@ int main(int argc, char *argv[]) {
       #endif
 
       //TODO: Patch this along with instances patch		
-      uint32_t instance_id = 0;
-              
+      uint32_t instance_id = 0; 
       generate_request_start = clock();
       encryptBulkReadRequest(rs, req_counter, bulk_batch_size, encrypted_request, tag_in, encrypted_request_size);
       generate_request_stop = clock();		
@@ -330,7 +329,6 @@ int main(int argc, char *argv[]) {
       //extractResponse(encrypted_response, tag_out, response_size, data_out);
       extractBulkResponse(encrypted_response, tag_out, response_size, data_out);			
       extract_response_stop = clock();
-
       //printf("Obtained data : %s\n", data_out);
 
       #ifdef RESULTS_DEBUG
@@ -340,7 +338,7 @@ int main(int argc, char *argv[]) {
           }
           printf("\n");
       #endif
-
+/*
     encryptRequest(10, 'w', data_in_test, DATA_SIZE, encrypted_request, tag_in, encrypted_request_size);
     printf("Write request is encrypted.\n");
     ZT_Access((uint32_t)0, ORAM_TYPE, encrypted_request, encrypted_response, tag_in, tag_out, encrypted_request_size, response_size, TAG_SIZE);
@@ -386,7 +384,7 @@ int main(int argc, char *argv[]) {
     }
         printf("\n");
 
-
+*/
 
 	#ifdef ANALYSIS
 
@@ -428,7 +426,7 @@ int main(int argc, char *argv[]) {
   free(tag_out);
   free(data_in);
   free(data_out);
-
+  ZT_Close();
   //printf("Enter a character before exit ...\n");
   //getchar();
   return 0;
