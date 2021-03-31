@@ -31,15 +31,15 @@ void get(uint32_t blockID, unsigned char* data_in, unsigned char* data_out, int 
 	unsigned char* tag_in = (unsigned char*) malloc(TAG_SIZE);
 	unsigned char* tag_out = (unsigned char*)malloc(TAG_SIZE);
 	encryptRequest(blockID, op, data_in, block_size, encrypted_request, tag_in, encrypted_request_size);
-	printf("Successful encryption.\n");
+	//printf("Successful encryption.\n");
 	ZT_Access(oramID, ORAM_TYPE, encrypted_request, encrypted_response, tag_in, tag_out, encrypted_request_size, response_size, TAG_SIZE);
-	printf("Successful access.\n");
+	//printf("Successful access.\n");
 	extractResponse(encrypted_response, tag_out, response_size, data_out);
 	data_out[response_size] = '\0';
-	printf("Fetched data\n");
-	for (int i = 0; i < response_size; i++)
-		printf("%c",data_out[i]);
-	printf("\n");
+	//printf("Fetched data\n");
+	//for (int i = 0; i < response_size; i++)
+		//printf("%c",data_out[i]);
+	//printf("\n");
 	free(encrypted_request);
 	free(encrypted_response);
 	free(tag_in);
@@ -49,7 +49,7 @@ void get(uint32_t blockID, unsigned char* data_in, unsigned char* data_out, int 
 
 void getParams(int argc, char* argv[])
 {
-  printf("Started getParams\n");
+  //printf("Started getParams\n");
   if(argc!=NUM_EXPECTED_PARAMS) {
     printf("Command line parameters error, received: %d, expected :%d\n",
            argc, NUM_EXPECTED_PARAMS);
@@ -158,7 +158,7 @@ int main(int argc, char *argv[]) {
 
   initializeZeroTrace();
  
-  printf("Before ZT_New call\n"); 
+  //printf("Before ZT_New call\n"); 
   uint32_t zt_id = ZT_New(MAX_BLOCKS, DATA_SIZE, STASH_SIZE, OBLIVIOUS_FLAG, RECURSION_DATA_SIZE, ORAM_TYPE, Z);
 //  uint32_t zt_id_other = ZT_New(MAX_BLOCKS,DATA_SIZE,STASH_SIZE,OBLIVIOUS_FLAG, RECURSION_DATA_SIZE,ORAM_TYPE,Z);
   //Store returned zt_id, to make use of different ORAM instances!
@@ -269,7 +269,7 @@ int main(int argc, char *argv[]) {
       extract_response_stop = clock();
 
       data_out[DATA_SIZE]='\0';
-      printf("Obtained data : %s\n", data_out);
+      //printf("Obtained data : %s\n", data_out);
 
       #ifdef RESULTS_DEBUG
           printf("datasize = %d, Fetched Data :", DATA_SIZE);
@@ -403,7 +403,7 @@ int main(int argc, char *argv[]) {
     }
   }
   //strcpy((char *)data_in, "Hello World");
-  printf("Requests Fin\n");	
+  //printf("Requests Fin\n");	
 
   #ifdef ANALYSIS
     fclose(iquery_file);
@@ -413,11 +413,11 @@ int main(int argc, char *argv[]) {
   tclock = end - start;
 
   //Time in CLOCKS :
-  printf("%ld\n",tclock);
-  if(bulk_batch_size==0)
-    printf("Per query time = %f ms\n",(1000 * ( (double)tclock/ ( (double)REQUEST_LENGTH) ) / (double) CLOCKS_PER_SEC));	
-  else
-    printf("Per query time = %f ms\n",(1000 * ( (double)tclock/ ( (double)REQUEST_LENGTH) ) / (double) CLOCKS_PER_SEC));
+  //printf("%ld\n",tclock);
+  //if(bulk_batch_size==0)
+    //printf("Per query time = %f ms\n",(1000 * ( (double)tclock/ ( (double)REQUEST_LENGTH) ) / (double) CLOCKS_PER_SEC));	
+ // else
+   // printf("Per query time = %f ms\n",(1000 * ( (double)tclock/ ( (double)REQUEST_LENGTH) ) / (double) CLOCKS_PER_SEC));
   //printf("%ld\n",CLOCKS_PER_SEC);
   
   free(encrypted_request);
