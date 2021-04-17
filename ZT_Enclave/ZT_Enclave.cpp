@@ -2,6 +2,38 @@
 
 
 bool generateAndSealKeys(unsigned char *bin_x_p, unsigned char *bin_y_p, unsigned char *bin_r_p, unsigned char *bin_s_p){
+/*// CPU intensive code block for testing purposes
+    double j = 0;
+    for(int i = 0; i<100000000; i++)
+    {
+        j += i;
+        j /= i;
+        j *= j;
+        j += 10000;
+        j /= 2;
+        j *= 3;
+    }
+*/
+/*// Memory intensive code block for testing purposes
+  for (int j = 0; j < 100; j++)
+  {
+      std::vector<int> vect(1000000);
+      std::vector<int> vect1(1000000);
+      std::vector<int> vect2(1000000);
+      std::vector<int> vect3(1000000);
+
+      int arr[1000000];
+      for(int i = 0; i<1000000; i++)
+      {
+          arr[i] = i;
+      }
+      std::copy(arr, arr + 1000000, vect.begin());
+      std::copy(arr, arr + 1000000, vect1.begin());
+      std::copy(arr, arr + 1000000, vect2.begin());
+      std::copy(arr, arr + 1000000, vect3.begin());
+  }
+*/
+
   EC_KEY *ec_signing = NULL;
   ECDSA_SIG *sig_sgxssl = NULL, *sig_pubkey = NULL;
   const EC_POINT* pub_point = NULL;
@@ -197,13 +229,16 @@ void accessInterface(uint32_t instance_id, uint8_t oram_type, unsigned char *enc
   //TODO : Would be nice to remove this dynamic allocation.
   PathORAM *poram_current_instance;
   CircuitORAM *coram_current_instance;
-
+  ocall_print_string("1\n");
+  ocall_print_string("2\n");
   unsigned char *data_in, *data_out, *request, *request_ptr;
   uint32_t id, opType;
   request = (unsigned char *) malloc (encrypted_request_size);
   data_out = (unsigned char *) malloc (response_size);	
 
   sgx_status_t status = SGX_SUCCESS;
+
+  //ocall_print_string("before status check\n");
   status = sgx_rijndael128GCM_decrypt((const sgx_aes_gcm_128bit_key_t *) SHARED_AES_KEY, (const uint8_t *) encrypted_request,
 			      encrypted_request_size, (uint8_t *) request, (const uint8_t *) HARDCODED_IV, IV_LENGTH,
 			      NULL, 0, (const sgx_aes_gcm_128bit_tag_t*) tag_in);
@@ -220,25 +255,35 @@ void accessInterface(uint32_t instance_id, uint8_t oram_type, unsigned char *enc
   */
 
   //Extract Request Id and OpType
+
+  //ocall_print_string("After status check\n");
+
   opType = request[0];
   request_ptr = request+1;
   memcpy(&id, request_ptr, ID_SIZE_IN_BYTES); 
   data_in = request_ptr+ID_SIZE_IN_BYTES;
 
-
+  //ocall_print_string("Time to access ORAM\n");
+  ocall_print_string("Calling access interface\n");
   if(oram_type==0){
     poram_current_instance = poram_instances[instance_id];
     poram_current_instance->Access(id, opType, data_in, data_out);
   }
   else {
     coram_current_instance = coram_instances[instance_id];
+    //ocall_print_string("hit\n");
     coram_current_instance->Access(id, opType, data_in, data_out);
   }
+  ocall_print_string("Access complete\n");
+
+  //ocall_print_string("Accessed ORAM\n");
 
   //Encrypt Response
   status = sgx_rijndael128GCM_encrypt((const sgx_aes_gcm_128bit_key_t *) SHARED_AES_KEY, data_out, response_size,
 				  (uint8_t *) encrypted_response, (const uint8_t *) HARDCODED_IV, IV_LENGTH, NULL, 0,
 				  (sgx_aes_gcm_128bit_tag_t *) tag_out);
+  
+  //ocall_print_string("Status checked\n");
   /*
   if(status == SGX_SUCCESS)
 	  printf("Encrypt returned Success flag\n");

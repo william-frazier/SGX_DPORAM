@@ -32,7 +32,6 @@
 
 #include <string.h>
 #include "sgx_cpuid.h"
-
 #include "sgx_trts.h"
 #include "../Globals_Enclave.hpp"
 #include "../Enclave_t.h"
@@ -57,3 +56,4 @@ void ecall_sgx_cpuid(int cpuinfo[4], int leaf)
     if (ret != SGX_SUCCESS)
         abort();
 }
+

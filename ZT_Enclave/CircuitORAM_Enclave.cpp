@@ -345,7 +345,7 @@ void CircuitORAM::EvictOnceFast(uint32_t *deepest, uint32_t *target, int32_t* de
 
 void CircuitORAM::CircuitORAM_FetchBlock(uint32_t *return_value, uint32_t leaf, uint32_t newleaf, char opType,
         uint32_t id, uint32_t position_in_id, uint32_t newleaf_nextlevel, uint32_t level, unsigned char *data_in, unsigned char *data_out) {
-
+  ocall_print_string("Fetching a block\n");
   //FetchBlock over Path
   uint32_t nlevel = N_level[level];
   uint32_t dlevel = D_level[level];
@@ -437,10 +437,12 @@ void CircuitORAM::CircuitORAM_FetchBlock(uint32_t *return_value, uint32_t leaf, 
   // before inserting it into stash.
   unsigned char *data_ptr = getDataPtr(serialized_result_block); 
   bool flag_w = (opType == 'w');
+  ocall_print_string("Writing a block\n");
   omove_buffer((unsigned char*) data_ptr, data_in, tdata_size, flag_w);
+  ocall_print_string("Reading a block\n");
   bool flag_r = (opType == 'r');
   omove_buffer(data_out, (unsigned char*) data_ptr, tdata_size, flag_r);
-
+  ocall_print_string("Reading done\n");
 
 
   #ifdef DETAILED_MICROBENCHMARKER
@@ -499,7 +501,7 @@ void CircuitORAM::CircuitORAM_FetchBlock(uint32_t *return_value, uint32_t leaf, 
   if(level == recursion_levels){
     recursive_stash[level].PerformAccessOperation(opType, id, newleaf, data_in, data_out);
   }
-
+  ocall_print_string("Blocked fetched\n");
 }
 
 
@@ -717,7 +719,9 @@ void CircuitORAM::EvictionRoutine(uint32_t leaf, uint32_t level) {
 }
 
 uint32_t CircuitORAM::CircuitORAM_Access(char opType, uint32_t id, uint32_t position_in_id, uint32_t leaf, uint32_t newleaf, uint32_t newleaf_nextlevel, unsigned char* decrypted_path, unsigned char* path_hash, uint32_t level, unsigned char* data_in, unsigned char *data_out){
-  
+
+  ocall_print_string("CircuitORAM_Access\n");
+  //ocall_print_string("Inside ORAM call\n"); 
   uint32_t dlevel = D_level[level];
   uint64_t nlevel = N_level[level];
   uint32_t i, k;
@@ -730,7 +734,7 @@ uint32_t CircuitORAM::CircuitORAM_Access(char opType, uint32_t id, uint32_t posi
   #endif	
  
   CircuitORAM_FetchBlock(&return_value, leaf, newleaf, opType, id, position_in_id, newleaf_nextlevel, level, data_in, data_out);
-
+  //ocall_print_string("Fetched ORAM block\n");
   //Free Result_block (Application/Use result_block otherwise)
   #ifdef ACCESS_DEBUG
     printf("\nResult_block ID = %d, label = %d, Return value = %d\n",getId(serialized_result_block), 
@@ -743,11 +747,11 @@ uint32_t CircuitORAM::CircuitORAM_Access(char opType, uint32_t id, uint32_t posi
   #endif  
 
   EvictionRoutine(leaf, level);
-
+  //ocall_print_string("Evection routine.\n");
   #ifdef DETAILED_MICROBENCHMARKER
    time_report(CO_EVICTION_END, level);
   #endif  
-
+  ocall_print_string("CircuitORAM access finished\n");
   return return_value;	
 }
 
@@ -759,6 +763,8 @@ uint32_t CircuitORAM::access(uint32_t id, int32_t position_in_id, char opType, u
   uint32_t newleaf_nextlevel = -1;
   unsigned char random_value[ID_SIZE_IN_BYTES];
 
+  ocall_print_string("::access\n");
+
   if(recursion_levels ==  1) {
     sgx_status_t rt = SGX_SUCCESS;
     rt = sgx_read_rand((unsigned char*) random_value, ID_SIZE_IN_BYTES);
@@ -767,7 +773,7 @@ uint32_t CircuitORAM::access(uint32_t id, int32_t position_in_id, char opType, u
     #ifdef DETAILED_MICROBENCHMARKER
       time_report(CO_POSMAP_START, 0); 
     #endif
-
+    //ocall_print_string("oarray search\n");
     if(oblivious_flag) {
       oarray_search(posmap, id, &leaf, newleaf, max_blocks_level[0]);		
     }
@@ -784,13 +790,13 @@ uint32_t CircuitORAM::access(uint32_t id, int32_t position_in_id, char opType, u
     #ifdef DETAILED_MICROBENCHMARKER
       time_report(CO_DOWNLOAD_PATH_START, 0); 
     #endif
-
+    //ocall_print_string("Going to download path\n");
     decrypted_path = downloadPath(leaf, path_hash, 0);			
 
     #ifdef DETAILED_MICROBENCHMARKER
       time_report(CO_DOWNLOAD_PATH_END, 0); 
     #endif
-
+    //ocall_print_string("Going to access_oram\n");
     CircuitORAM_Access(opType, id, -1, leaf, newleaf, -1, decrypted_path, path_hash, level, data_in, data_out);
   }
 
@@ -842,9 +848,11 @@ uint32_t CircuitORAM::access(uint32_t id, int32_t position_in_id, char opType, u
     #ifdef ACCESS_DEBUG
       printf("access, Level = %d : \n nextLeaf from level = %d\n",level,nextLeaf);
     #endif
+  ocall_print_string("::access else\n");
   return nextLeaf;
 
   }
+ocall_print_string("::access normal\n");
 return nextLeaf;
 }	
 

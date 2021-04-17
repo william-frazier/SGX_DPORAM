@@ -17,8 +17,8 @@
 
 #include "Sample_App.hpp"
 #include <iostream>
-
-
+#include <chrono>
+#include <vector>
 
 
 void get(uint32_t blockID, unsigned char* data_in, unsigned char* data_out, int block_size,char op, uint32_t oramID) 
@@ -153,7 +153,54 @@ int initializeZeroTrace() {
 
 }
 
+void run_CPU_test() // Simply to test computationally expensive tasks
+{
+    double j = 0;
+    for(int i = 0; i<100000000; i++)
+    {
+        j += i;
+        j /= i;
+        j *= j;
+        j += 10000;
+        j /= 2;
+        j *= 3;
+    }
+
+}
+
+void run_memory_test() // Simply to test memory usage
+{
+for (int j = 0; j < 100; j++)
+{
+    std::vector<int> vect(1000000);
+    std::vector<int> vect1(1000000);
+    std::vector<int> vect2(1000000);
+    std::vector<int> vect3(1000000);
+
+    int arr[1000000];
+    for(int i = 0; i<1000000; i++)
+    {
+        arr[i] = i;
+    }
+    std::copy(arr, arr + 1000000, vect.begin());
+    std::copy(arr, arr + 1000000, vect1.begin());
+    std::copy(arr, arr + 1000000, vect2.begin());
+    std::copy(arr, arr + 1000000, vect3.begin());
+}
+
+}
+
+
 int main(int argc, char *argv[]) {
+
+  std::chrono::steady_clock::time_point chrono_begin = std::chrono::steady_clock::now();
+  //run_CPU_test();
+  //run_memory_test();
+  std::chrono::steady_clock::time_point chrono_end1 = std::chrono::steady_clock::now();
+
+  std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(chrono_end1 - chrono_begin).count() << "[µs]" << std::endl;
+  std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::nanoseconds> (chrono_end1 - chrono_begin).count() << "[ns]" << std::endl;
+  //return 0;
   getParams(argc, argv);
 
   initializeZeroTrace();
@@ -166,6 +213,7 @@ int main(int argc, char *argv[]) {
   
   //Variable declarations
   RandomRequestSource reqsource;
+  clock_t epsolute_last;
   clock_t start,end,tclock;  
   uint32_t *rs = reqsource.GenerateRandomSequence(REQUEST_LENGTH,MAX_BLOCKS-1);
   uint32_t i = 0;
@@ -257,16 +305,24 @@ int main(int argc, char *argv[]) {
       encryptRequest(request, 'r', data_in, DATA_SIZE, encrypted_request, tag_in, encrypted_request_size);
       generate_request_stop = clock();		
 
+      std::cout << "Prepare request: " << generate_request_stop - start << " " << generate_request_stop - generate_request_start << std::endl;
+
       //printf("encrypted request = %s\n", encrypted_request);
       //Process Request:
-      process_request_start = clock();		
+      process_request_start = clock()/(CLOCKS_PER_SEC/1000);		
       ZT_Access(instance_id, ORAM_TYPE, encrypted_request, encrypted_response, tag_in, tag_out, encrypted_request_size, response_size, TAG_SIZE);
-      process_request_stop = clock();				
+      process_request_stop = clock()/(CLOCKS_PER_SEC/1000);				
+
+      std::cout << "Process request: " << process_request_stop - start << " " << process_request_stop - process_request_start << std::endl;
+
 
       //Extract Response:
       extract_response_start = clock();
       extractResponse(encrypted_response, tag_out, response_size, data_out);
       extract_response_stop = clock();
+
+      std::cout << "Extract response: " << extract_response_stop - start << " " << extract_response_stop - extract_response_start << std::endl;
+
 
       data_out[DATA_SIZE]='\0';
       //printf("Obtained data : %s\n", data_out);
@@ -313,8 +369,11 @@ int main(int argc, char *argv[]) {
       //TODO: Patch this along with instances patch		
       uint32_t instance_id = 0; 
       generate_request_start = clock();
+
+
       encryptBulkReadRequest(rs, req_counter, bulk_batch_size, encrypted_request, tag_in, encrypted_request_size);
       generate_request_stop = clock();		
+      std::cout << "Prepare bulk request: " << generate_request_stop - start << " " << generate_request_stop - generate_request_start << std::endl;
 
       //decryptBulkReadRequest(bulk_batch_size, encrypted_request, tag_in, encrypted_request_size);
 
@@ -323,6 +382,7 @@ int main(int argc, char *argv[]) {
       ZT_Bulk_Read(instance_id, ORAM_TYPE, bulk_batch_size, encrypted_request, encrypted_response, tag_in, tag_out, encrypted_request_size, response_size, TAG_SIZE);
       process_request_stop = clock();				
 
+      std::cout << "Process bulk request: " << process_request_stop - start << " " << process_request_stop - process_request_start << std::endl;
 
       //Extract Response:
       extract_response_start = clock();
@@ -330,6 +390,8 @@ int main(int argc, char *argv[]) {
       extractBulkResponse(encrypted_response, tag_out, response_size, data_out);			
       extract_response_stop = clock();
       //printf("Obtained data : %s\n", data_out);
+      std::cout << "Extract request: " << extract_response_stop - start << " " << extract_response_stop - extract_response_start << std::endl;
+
 
       #ifdef RESULTS_DEBUG
           printf("datasize = %d, Fetched Data :", DATA_SIZE);
@@ -429,6 +491,11 @@ int main(int argc, char *argv[]) {
   ZT_Close();
   //printf("Enter a character before exit ...\n");
   //getchar();
+std::chrono::steady_clock::time_point chrono_end = std::chrono::steady_clock::now();
+
+std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::microseconds>(chrono_end - chrono_begin).count() << "[µs]" << std::endl;
+std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::nanoseconds> (chrono_end - chrono_begin).count() << "[ns]" << std::endl;
+
   return 0;
 }
 

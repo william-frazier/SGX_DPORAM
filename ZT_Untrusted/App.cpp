@@ -27,6 +27,7 @@ Note : parameters surrounded by quotes should entered in as is without the quote
 */
 
 #include "App.h"
+#include <ctime>
 
 #define MAX_PATH FILENAME_MAX
 #define CIRCUIT_ORAM
@@ -303,6 +304,9 @@ void ocall_print_string(const char *str) {
      * the input string to prevent buffer overflow. 
      */
     printf("%s", str);
+
+    printf("%f\n", ((double)clock())/(CLOCKS_PER_SEC/1000));
+
 }
 
 void *HandleRequest(void *arg) {
